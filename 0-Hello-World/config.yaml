@@ -1,0 +1,7 @@
+variant: fcos
+version: 1.2.0
+passwd:
+  users:
+  - name: user
+    ssh_authorized_keys:
+    - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIF6gZdvLjm/kYHmDvV3odxC5soz3GpopuP+3ok1k2qd
