@@ -1,0 +1,40 @@
+variant: fcos
+version: 1.2.0
+systemd:
+  units:
+  - name: haproxy.service
+    enabled: true
+    contents: |
+      [Unit]
+      Description=Haproxy Load Balancer
+      After=network-online.target
+      Wants=network-online.target
+      [Service]
+      ExecStartPre=-/bin/podman kill haproxy
+      ExecStartPre=-/bin/podman rm haproxy
+      ExecStartPre=/bin/podman pull haproxy
+      ExecStart=/bin/podman run --name haproxy -p 80:8080 -v /etc/haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro haproxy
+      [Install]
+      WantedBy=multi-user.target
+storage:
+  directories:
+  - path: /etc/haproxy
+  files:
+  - path: /etc/haproxy/haproxy.cfg
+    mode: 0444
+    contents:
+      inline: |
+        global
+            log         stdout format raw local0
+        defaults
+            mode                    tcp
+            log                     global
+            option                  tcplog 
+        frontend http
+            bind *:8080
+            default_backend   http
+        backend http
+            balance     roundrobin
+%{ for name, addr in servers ~}
+            server ${name} ${addr}:80 check
+%{ endfor ~}
