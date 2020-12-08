@@ -3,5 +3,14 @@ version: 1.2.0
 passwd:
   users:
   - name: user
-    ssh_authorized_keys:
-    - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIF6gZdvLjm/kYHmDvV3odxC5soz3GpopuP+3ok1k2qd
+    # Password is 'weakpassword'. You can get a hash for your own (hopefully
+    # much stronger) password using mkpasswd --method=yescrypt
+    password_hash: $y$j9T$aJ.mHatSyq7Y6A8cGmWMb1$OM0KL4KXasbKILlQvINy5dkDlJssJhgbgmmeT.Z7jp7
+storage:
+  files:
+  # Enable SSH Password Auth for demonstration purposes.
+  - path: /etc/ssh/sshd_config.d/20-enabled-passwords.conf
+    mode: 0644 
+    contents:
+      inline: |
+        PasswordAuthentication yes
